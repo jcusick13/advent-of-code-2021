@@ -20,12 +20,18 @@ int main() {
 
     int i;
     int total = 0;
+    int window_a;
+    int window_b;
     for (i = 0; i < n; i++) {
-        if (i == 0) {
+        if (i < 3) {
             continue;
         }
+        
+        window_a = numbers[i - 3] + numbers[i - 2] + numbers[i - 1];
+        window_b = numbers[i - 2] + numbers[i - 1] + numbers[i];
 
-        if (numbers[i] > numbers[i - 1]) {
+
+        if (window_b > window_a) {
             total++;
         }
     }
