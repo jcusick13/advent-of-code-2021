@@ -2,8 +2,9 @@
 #include "inputs/02.h"
 
 int main() {
+    int aim = 0;
     int horizontal = 0;
-    int vertical = 0;
+    int depth = 0;
     const unsigned char *s = input;
 
     while (*s != '\0') {
@@ -14,23 +15,26 @@ int main() {
             s++;
 
             horizontal += (*s - '0');
+            if (aim) {
+                depth += (aim * (*s - '0'));
+            }
         }
         if (*s == 'd') {
             while (*s != ' ') s++;
             s++;
 
-            vertical += (*s - '0');
+            aim += (*s - '0');
         }
         if (*s == 'u') {
             while (*s != ' ') s++;
             s++;
 
-            vertical -= (*s - '0');
+            aim -= (*s - '0');
         }
         s++;
     }
 
-    int answer = horizontal * vertical;
+    int answer = horizontal * depth;
     printf("%d\n", answer);
 
     return 0;
