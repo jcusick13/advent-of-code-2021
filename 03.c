@@ -3,8 +3,8 @@
 #include <string.h>
 #include "inputs/03.h"
 
-#define N_BITS 5
-#define N_ROWS 12
+#define N_BITS 12
+#define N_ROWS 1000
 
 struct Counter {
     int zero, one;
@@ -78,57 +78,71 @@ int powerConsumption(int report[N_ROWS * N_BITS]) {
 }
 
 
-int lifeSupportRatingOxygen(int report[N_ROWS * N_BITS]) {
+int lifeSupportRating(int report[N_ROWS * N_BITS], int rating_type) {
+    /* Set `rating_type` to 0 for oxygen generator, 1 for CO2 scrubber*/
     int starting_n = N_ROWS * N_BITS;
-    int *oxygen_n = &starting_n;
-    int _oxygen_n = 0;
+    int *rating_n = &starting_n;
+    int _rating_n = 0;
 
-    int *oxygen[*oxygen_n];
-    int _oxygen[*oxygen_n];
-    int oxygen_bit;
+    int *rating[*rating_n];
+    int _rating[*rating_n];
+    int rating_bit;
 
     // Copy inital inputs into rating-specifc arrays
-    for (int i = 0; i < (*oxygen_n); i++) {
-        oxygen[i] = &report[i];
+    for (int i = 0; i < (*rating_n); i++) {
+        rating[i] = &report[i];
     }
 
     for (int bit = 0; bit < N_BITS; bit++) {
 
-        // Determine most common bits for each set rating values
-        struct Counter *oxygen_bit_counts;
-        oxygen_bit_counts = countBitFreqs(*oxygen, *oxygen_n);
+        // Determine most common bits in each slot
+        struct Counter *rating_bit_counts;
+        rating_bit_counts = countBitFreqs(*rating, *rating_n);
 
-        if (oxygen_bit_counts[bit].zero > oxygen_bit_counts[bit].one) {
-            oxygen_bit = 0;
+        if (rating_type == 0){
+            // Oxygen generator
+            if (rating_bit_counts[bit].zero > rating_bit_counts[bit].one) {
+                rating_bit = 0;
+            }
+            else {
+                rating_bit = 1;
+            }
         }
         else {
-            oxygen_bit = 1;
+            // CO2 scrubber
+            if (rating_bit_counts[bit].zero > rating_bit_counts[bit].one) {
+                rating_bit = 1;
+            }
+            else {
+                rating_bit = 0;
+            }
+
         }
 
-        _oxygen_n = 0;
-        for (int cell = 0; cell < (*oxygen_n); cell++) {
+        _rating_n = 0;
+        for (int cell = 0; cell < (*rating_n); cell++) {
             if ((int)(cell % N_BITS) != bit) continue;
-            if (*oxygen[cell] != oxygen_bit) continue;
+            if (*rating[cell] != rating_bit) continue;
 
             // Match found, copy entire entry to new candidate set
             for (int j = (bit * -1); j < (N_BITS - bit); j++) {
-                _oxygen[_oxygen_n] = *oxygen[cell + j];
-                _oxygen_n++;
+                _rating[_rating_n] = *rating[cell + j];
+                _rating_n++;
             }
         }
 
-        *oxygen_n = _oxygen_n;
-        for (int k = 0; k < (*oxygen_n); k++) {
-            oxygen[k] = &_oxygen[k];
+        *rating_n = _rating_n;
+        for (int k = 0; k < (*rating_n); k++) {
+            rating[k] = &_rating[k];
         }
     }
 
-    int oxygen_rating = binaryToDecimal(*oxygen, N_BITS);
-    printf("Oxygen rating: %d\n", oxygen_rating);
+    int output_rating = binaryToDecimal(*rating, N_BITS);
 
-    return oxygen_rating;
+    return output_rating;
 }
 
+/*
 int lifeSupportRatingCo2(int report[N_ROWS * N_BITS]) {
     int starting_n = N_ROWS * N_BITS;
     int *co2_n = &starting_n;
@@ -179,7 +193,7 @@ int lifeSupportRatingCo2(int report[N_ROWS * N_BITS]) {
 
     return co2_rating;
 }
-
+*/
 
 
 int main() {
@@ -198,8 +212,13 @@ int main() {
     int power_consumption = powerConsumption(report);
     printf("Power consumption: %d\n", power_consumption);
 
-    int oxygen_generator_rating = lifeSupportRatingOxygen(report);
-    int co2_scrubber_rating = lifeSupportRatingCo2(report);
+    int rating_value;
+    rating_value = 0;
+    int oxygen_generator_rating = lifeSupportRating(report, rating_value);
+
+    rating_value = 1;
+    int co2_scrubber_rating = lifeSupportRating(report, rating_value);
+
     int life_support_rating = oxygen_generator_rating * co2_scrubber_rating;
     printf("Life support rating: %d\n", life_support_rating);
     return 0;
