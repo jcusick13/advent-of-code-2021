@@ -116,7 +116,6 @@ int lifeSupportRating(int report[N_ROWS * N_BITS], int rating_type) {
             else {
                 rating_bit = 0;
             }
-
         }
 
         _rating_n = 0;
@@ -141,59 +140,6 @@ int lifeSupportRating(int report[N_ROWS * N_BITS], int rating_type) {
 
     return output_rating;
 }
-
-/*
-int lifeSupportRatingCo2(int report[N_ROWS * N_BITS]) {
-    int starting_n = N_ROWS * N_BITS;
-    int *co2_n = &starting_n;
-    int _co2_n = 0;
-
-    int *co2[*co2_n];
-    int _co2[*co2_n];
-    int co2_bit;
-
-    // Copy inital inputs into rating-specifc arrays
-    for (int i = 0; i < (*co2_n); i++) {
-        co2[i] = &report[i];
-    }
-
-    for (int bit = 0; bit < N_BITS; bit++) {
-
-        // Determine most common bits for each set rating values
-        struct Counter *co2_bit_counts;
-        co2_bit_counts = countBitFreqs(*co2, *co2_n);
-
-        if (co2_bit_counts[bit].zero > co2_bit_counts[bit].one) {
-            co2_bit = 1;
-        }
-        else {
-            co2_bit = 0;
-        }
-
-        _co2_n = 0;
-        for (int cell = 0; cell < (*co2_n); cell++) {
-            if ((int)(cell % N_BITS) != bit) continue;
-            if (*co2[cell] != co2_bit) continue;
-
-            // Match found, copy entire entry to new candidate set
-            for (int j = (bit * -1); j < (N_BITS - bit); j++) {
-                _co2[_co2_n] = *co2[cell + j];
-                _co2_n++;
-            }
-        }
-
-        *co2_n = _co2_n;
-        for (int k = 0; k < (*co2_n); k++) {
-            co2[k] = &_co2[k];
-        }
-    }
-
-    int co2_rating = binaryToDecimal(*co2, N_BITS);
-    printf("CO2 rating: %d\n", co2_rating);
-
-    return co2_rating;
-}
-*/
 
 
 int main() {
