@@ -42,7 +42,7 @@ bool boardFinished(BingoCell *board) {
     for (int row = 0; row < SIZE; row++) {
         int marked_row_vals = 0;
         for (int cell = 0; cell < (SIZE * SIZE); cell++) {
-            if (cell  < (row * SIZE) || cell >= ((row + 1) * SIZE)) continue;
+            if (cell < (row * SIZE) || cell >= ((row + 1) * SIZE)) continue;
             if (!board[cell].marked) {
                 marked_row_vals = 0;
                 break;
@@ -103,38 +103,48 @@ int main() {
                 boards[b][c] = board[c];
             }
         }
-
         break;
     }
 
 
-    bool found_finished_board = false;
-    int finished_board, winning_number;
+    int unfinished_boards[N_BOARDS];
+    for (int board = 0; board < N_BOARDS; board++) {
+        unfinished_boards[board] = 1;
+    }
+
+    int n_unfinished_boards = -1;
+    int last_board, winning_number;
     for (int i = 0; i < n; i++) {
+        // Mark off an individual number on each board
         for (int board_i = 0; board_i < N_BOARDS; board_i++) {
             markBoard(boards[board_i], drawn_numbers[i]);
 
             if (boardFinished(boards[board_i])) {
-                found_finished_board = true;
-                finished_board = board_i;
-                break;
+                unfinished_boards[board_i] = 0;
+
+                // Check if a single board remains unfinished
+                n_unfinished_boards = 0;
+                for (int b = 0; b < N_BOARDS; b++) {
+                    if (unfinished_boards[b] == 1) n_unfinished_boards++;
+                }
+                if (n_unfinished_boards == 0) {
+                    winning_number = drawn_numbers[i];
+                    last_board = board_i;
+                    break;
+                }
             }
         }
-
-        if (found_finished_board) {
-            winning_number = drawn_numbers[i];
-            break;
-        }
+        if (n_unfinished_boards == 0) break;
     }
 
     // Sum unmarked numbers of selected board
     int unmarked = 0;
     for (int cell = 0; cell < (SIZE * SIZE); cell++) {
-        if (boards[finished_board][cell].marked) continue;
-        unmarked += boards[finished_board][cell].number;
+        if (boards[last_board][cell].marked) continue;
+        unmarked += boards[last_board][cell].number;
     }
 
-    printf("\n%d", unmarked * winning_number);
+    printf("%d\n", unmarked * winning_number);
 
     return 0;
 }
