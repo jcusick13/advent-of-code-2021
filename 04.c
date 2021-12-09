@@ -38,9 +38,9 @@ bool boardFinished(BingoCell *board) {
     // Check for complete row
     for (int row = 0; row < SIZE; row++) {
         int marked_row_vals = 0;
-        for (int cell = 1; cell < ((SIZE * SIZE) + 1); cell++) {
-            if (cell < row || cell > (row * SIZE)) continue;
-            if (!board[cell - 1].marked) break;
+        for (int cell = 0; cell < (SIZE * SIZE); cell++) {
+            if (cell < (row * SIZE) || cell >= ((row + 1) * SIZE)) continue;
+            if (!board[cell].marked) break;
             marked_row_vals += 1;
 
             if (marked_row_vals == SIZE) {
