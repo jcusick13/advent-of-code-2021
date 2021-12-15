@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,6 +37,15 @@ int median(int** array, int n) {
     return (*array)[n / 2];
 }
 
+int calcFuelRate(int n) {
+    int fuel_rate = 0;
+    for (int i = 1; i <= n; i++) {
+        fuel_rate += i;
+    }
+
+    return fuel_rate;
+}
+
 
 int main() {
     const unsigned char *s = input;
@@ -50,7 +60,6 @@ int main() {
     // Read in crab locations
     while (*s != '\0') {
         int value = 0;
-        //while (*s < '0' || *s > '9') s++;
         while (*s >= '0' && *s <= '9') {
             value = (value * 10) + (*s - '0');
             s++;
@@ -60,15 +69,24 @@ int main() {
         s++;
     }
 
-    int center;
-    center = median(&crabs, n_crabs);
-    printf("Center: %d\n", center);
-
-    int total_fuel = 0;
-    for (int i = 0; i < n_crabs; i++) {
-        total_fuel += abs(crabs[i] - center);
+    int max_location = 0;
+    for (int i = 0; i < n_crabs; i++) { 
+        if (crabs[i] > max_location) max_location = crabs[i];
     }
 
-    printf("Central crab: %d, Total fuel: %d\n", center, total_fuel);
+    int best_fuel = INT_MAX;
+    int best_location;
+    for (int location = 0; location < max_location; location++) {
+        int fuel_cost = 0;
+        for (int i = 0; i < n_crabs; i++) {
+            fuel_cost += calcFuelRate(abs(crabs[i] - location));
+        }
+        if (fuel_cost < best_fuel) {
+            best_fuel = fuel_cost;
+            best_location = location;
+        }
+    }
+
+    printf("Central crab: %d, Total fuel: %d\n", best_location, best_fuel);
     return 0;
 }
